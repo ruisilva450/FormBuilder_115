@@ -1,34 +1,36 @@
 # FormBuilder_115
 This repo is to showcase issue https://github.com/Microsoft/BotBuilder-V3/issues/115
 
-Bot Builder Version
+## Version
 v3.20.1
 
-Describe the bug
+## Describe the bug
 I have a model with a FormBuilder with a field that asks a string that should contain a date, asks LUIS about the resolution of that date and if there are multiple resolutions it appends to ValidateResult Choices the possible answers for the user to pick. But this only works fine in the emulator. Skype and Teams were tested so far with error BadRequest on bubbling up to parent dialog.
 
-To Reproduce
+## To Reproduce
 Steps to reproduce the behavior:
+1. FormBuilder with field of type string expecting to have "30-01-2019" when form is complete
+2. Validate delegation to custom logic
+3. Send response to LUIS to check for prebuild entity of type **datetimev2**
+4. LUIS gives back 2+ resolutions for dates in the format of "dd-MM-yyyy"
+5. For each resolution create choice and append it to ValidateResult.Choices
+6. Return ValidateResult
+7. Test in emulator: works
+8. Test in Skype/MSTeams: don't work
 
-FormBuilder with field of type string expecting to have "30-01-2019" when form is complete
-Validate delegation to custom logic
-Send response to LUIS to check for prebuild entity of type datetimev2
-LUIS gives back 2+ resolutions for dates in the format of "dd-MM-yyyy"
-For each resolution create choice and append it to ValidateResult.Choices
-Return ValidateResult
-Test in emulator: works
-Test in Skype/MSTeams: don't work
-Expected behavior
+## Expected behavior
 Give the same options as the emulator renders
 
-Screenshots
+## Screenshots
 Emulator:
-
+![image](https://user-images.githubusercontent.com/5648218/52123753-ed159600-261e-11e9-9a84-e772d70a31b6.png)
 
 Skype:
+![image](https://user-images.githubusercontent.com/5648218/52123866-47aef200-261f-11e9-8612-0e2a16e21062.png)
 
 
-Additional context
+## Additional context
+```csharp
 .Field(nameof(Date), validate: async (state, response) =>
 {
     var result = new ValidateResult { IsValid = true, Value = response };
@@ -84,3 +86,4 @@ Additional context
     result.IsValid = foundResult;
     return result;
 })
+```
